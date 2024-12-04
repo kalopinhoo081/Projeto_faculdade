@@ -1,13 +1,6 @@
 Flask
-selenium
-pandas
-numpy
-xlsxwriter
-nest_asyncio
-gunicorn
-flask-cors
-pyperclip
-flask-sqlalchemy
+Flask-SQLAlchemy
+Flask-Cors
+Werkzeug
 mysql-connector-python
-werkzeug
-pyinstaller
+geopy
