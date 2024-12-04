@@ -1,0 +1,71 @@
+.logo img {
+    width: 70px
+    
+ }
+ body{
+     background-image: url(../static/images/fundo.jpg);
+     background-attachment: fixed;
+     line-height: 1.6;
+     background-size: cover;
+ }
+ h1{
+     color: white;
+     margin-right: 200px;
+     text-align: center;
+     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+ }
+ /* Estilo do contêiner para centralizar o mapa */
+ .map-container {
+     display: flex;
+     justify-content: center; /* Centraliza horizontalmente */
+     align-items: center; /* Centraliza verticalmente */
+     height: 100vh; /* Altura total da tela */
+     height: 500px; /* Ajuste conforme necessário */
+     width: 70%; /* Ajuste conforme necessário */
+     margin: 20px auto; /* Centraliza o mapa */
+     background-color: rgba(0, 0, 0, 0.6); /* Fundo escuro para contraste */
+     border: 8px solid #61dafb; /* Borda colorida */
+     border-radius: 15px; /* Borda arredondada */
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra suave ao redor */
+     overflow: hidden; /* Evita que o conteúdo ultrapasse as bordas */
+ }
+
+ #map {
+     height: 500px; /* Altura do mapa */
+     width: 95%; /* Largura do mapa */
+ }
+ header {
+background-color: rgba(51, 51, 51, 0.8);
+padding: 10px 0;
+position: sticky;
+top: 0;
+z-index: 1000;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+}
+nav {
+width: 100%;
+margin: 0 auto;
+display: flex;
+justify-content: space-between;
+align-items: center;
+
+}
+
+/* Estilos para o botão "Voltar para a tela inicial" */
+.back-button {
+background-color: green;
+color: white;
+padding: 10px 20px;
+text-decoration: none;
+font-weight: bold;
+border-radius: 5px;
+margin-left: 10px;  /* Distância do título */
+display: inline-block;  /* Permite o botão ficar na mesma linha do título */
+transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+background-color: white; /* Cor quando passar o mouse */
+}
+

@@ -1,0 +1,144 @@
+/* Estilo Geral */
+body {
+    background-image: url(edufundo.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background-color: #f0f8ff; /* Azul claro */
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Cabeçalho */
+  header {
+    background-color: green; /* Laranja vibrante */
+    color: rgb(184, 184, 184);
+    padding: 20px;
+    text-align: center;
+    border-bottom: 5px solid #ff6347; /* Vermelho vivo */
+  }
+  
+  header h1 {
+    font-size: 2.5em;
+    margin: 0;
+  }
+  
+  header p {
+    font-size: 1.2em;
+  }
+  
+  /* Container Principal */
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgb(226, 9, 9);
+  }
+  
+  /* Títulos */
+  h2, h3 {
+    color: #ff6347;
+  }
+  
+  h3 {
+    margin-top: 30px;
+    font-size: 1.5em;
+  }
+  
+  h4 {
+    color: #ffa500;
+    margin: 20px 0 10px;
+  }
+  
+  /* Materiais */
+  .materials ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .materials ul li {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    background-color: #ffe4b5; /* Bege claro */
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .materials ul li img {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+  }
+  
+  /* Passo a Passo */
+  .step {
+    margin-bottom: 30px;
+    background-color: #e6f7ff; /* Azul claro */
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px dashed #87ceeb; /* Azul bebê */
+  }
+  
+  .step img {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+    margin-top: 10px;
+    border: 3px solid #ffa500; /* Borda laranja */
+  }
+  
+  /* Botões */
+  .btn {
+    display: inline-block;
+    padding: 15px 25px;
+    background-color: #ff6347; /* Vermelho vivo */
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 10px 5px;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  
+  .btn:hover {
+    background-color: #ffa500;
+    transform: scale(1.1); /* Aumenta o botão ao passar o mouse */
+  }
+  
+  /* Rodapé */
+  footer {
+    text-align: center;
+    padding: 10px;
+    background-color: hsl(177, 91%, 45%);
+    color: green;
+    margin-top: 20px;
+    border-top: 5px solid #ff6347;
+  }
+  
+  /* Estilo Infantil Adicional */
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 150px;
+    background-image: url('https://via.placeholder.com/1500x150/ffeb99'); /* Padrão ilustrativo (substitua com imagem infantil real) */
+    background-size: cover;
+    z-index: -1;
+  }
+  
+  header::after {
+    content: '🌟🌍✨';
+    font-size: 2em;
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+  }
+  

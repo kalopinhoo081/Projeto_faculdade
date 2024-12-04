@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="../static/images/green_processed.jfif" alt="Logo do Projeto">
+        </div>
+
+        <h1>Cadastro</h1>
+
+        <form id="cadastroForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Senha" required>
+            <input type="password" id="confirmPassword" placeholder="Repetir senha" required>
+            <label for="options">Tipo de cadastro</label>
+            <select id="options" name="Tipo de cadastro">
+                <option value="Coletor">Coletor</option>
+                <option value="Usuário">Usuário</option>
+            </select>
+            <input type="text" id="phone_number" placeholder="Número de Telefone" required>
+            <button type="button" onclick="registrarUsuario()">Concluir cadastro</button>
+        </form>
+    </div>
+
+    <script>
+        async function registrarUsuario() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const user_type = document.getElementById('options').value;
+            const phone_number = document.getElementById('phone_number').value;
+
+            if (password !== confirmPassword) {
+                alert("As senhas não coincidem.");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password, phone_number, user_type })
+            });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    window.location.href = "/";
+                } else {
+                    alert("Erro ao cadastrar: " + data.message);
+                }
+            } catch (error) {
+                console.error("Erro ao cadastrar:", error);
+                alert("Erro no servidor. Tente novamente mais tarde.");
+            }
+        }
+    </script>
+</body>
+</html>

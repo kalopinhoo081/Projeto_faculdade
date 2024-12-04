@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área do Coletor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .denuncia-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .denuncia-image {
+            max-width: 150px;
+            max-height: 150px;
+            object-fit: cover;
+        }
+        .denuncia-details p {
+            margin: 5px 0;
+        }
+        .denuncia-checkbox {
+            margin-right: 10px;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Denúncias Disponíveis</h1>
+        <div id="map"></div>
+        <div class="button-group">
+            <button onclick="logout()">Deslogar</button>
+            <button onclick="finalizeRoutes()">Finalizar Denúncias Selecionadas</button>
+            <button onclick="traceRoute()">Traçar Nova Rota no Waze</button>
+        </div>
+        <form id="coletorForm">
+            <div id="denunciasContainer">
+                <!-- As denúncias serão carregadas aqui -->
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Função para deslogar
+        function logout() {
+            localStorage.clear(); // Limpa o localStorage
+            window.location.href = "/login"; // Redireciona para a página de login
+        }
+
+        // Inicializa o mapa com a biblioteca Leaflet
+        const map = L.map('map').setView([-23.55052, -46.633308], 13); // Coordenadas padrão para São Paulo
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Função para buscar e exibir denúncias no mapa e na lista
+        async function fetchDenuncias() {
+            try {
+                const response = await fetch('http://localhost:5000/denuncias');
+                const data = await response.json();
+
+                if (response.ok) {
+                    const denunciasContainer = document.getElementById('denunciasContainer');
+                    denunciasContainer.innerHTML = ''; // Limpa o container antes de preencher
+
+                    data.denuncias.forEach((denuncia) => {
+                        // Adiciona o ponto no mapa
+                        const [latitude, longitude] = denuncia.localizacao.split(',').map(coord => parseFloat(coord));
+                        const marker = L.marker([latitude, longitude]).addTo(map);
+                        marker.bindPopup(`
+                            <div>
+                                <strong>Descrição:</strong> ${denuncia.descricao}<br>
+                                <strong>Status:</strong> ${denuncia.status}<br>
+                                <img src="data:image/jpeg;base64,${denuncia.imagem}" alt="Foto da Denúncia" style="width: 100px; height: 100px; object-fit: cover;">
+                            </div>
+                        `);
+
+                        // Adiciona os detalhes na lista de denúncias
+                        const denunciaDiv = document.createElement('div');
+                        denunciaDiv.classList.add('denuncia-item');
+
+                        // Define a cor do item baseado no status
+                        if (denuncia.status === 'iniciado') {
+                            denunciaDiv.style.backgroundColor = 'yellow';
+                        } else if (denuncia.status === 'finalizado') {
+                            denunciaDiv.style.backgroundColor = 'lightgreen';
+                        }
+
+                        denunciaDiv.innerHTML = `
+                            <input type="checkbox" class="denuncia-checkbox" value="${denuncia.id}">
+                            <img src="data:image/jpeg;base64,${denuncia.imagem}" alt="Foto da Denúncia" class="denuncia-image">
+                            <div class="denuncia-details">
+                                <p><strong>Descrição:</strong> ${denuncia.descricao}</p>
+                                <p><strong>Localização:</strong> ${denuncia.localizacao}</p>
+                                <p><strong>Status:</strong> ${denuncia.status}</p>
+                            </div>
+                        `;
+
+                        denunciasContainer.appendChild(denunciaDiv);
+                    });
+                } else {
+                    alert("Erro ao carregar as denúncias: " + data.message);
+                }
+            } catch (error) {
+                console.error("Erro ao buscar as denúncias:", error);
+                alert("Erro no servidor. Tente novamente mais tarde.");
+            }
+        }
+
+        // Função para traçar rota no Waze e atualizar o status
+        async function traceRoute() {
+            const checkboxes = document.querySelectorAll('.denuncia-checkbox:checked');
+            const selectedDenuncias = Array.from(checkboxes).map((checkbox) => checkbox.value);
+
+            if (selectedDenuncias.length === 0) {
+                alert("Selecione pelo menos uma denúncia.");
+                return;
+            }
+
+            // Atualiza o status para 'iniciado' no backend
+            try {
+                const response = await fetch('http://localhost:5000/update-denuncias-status', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: selectedDenuncias, status: 'iniciado' })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert("Rota iniciada com sucesso!");
+
+                    // Traça a rota no Waze
+                    const locations = [];
+                    selectedDenuncias.forEach((id) => {
+                        const checkbox = document.querySelector(`input[value="${id}"]`);
+                        const details = checkbox.parentElement.querySelector('.denuncia-details p:nth-child(3)').innerText;
+                        const location = details.replace("Localização:", "").trim();
+                        locations.push(location);
+                    });
+
+                    const firstLocation = locations[0];
+                    const [latitude, longitude] = firstLocation.split(',');
+
+                    const wazeUrl = `https://www.waze.com/ul?ll=${latitude},${longitude}&navigate=yes`;
+                    window.open(wazeUrl, '_blank'); // Abre o Waze em uma nova aba
+
+                    // Recarrega as denúncias
+                    fetchDenuncias();
+                } else {
+                    alert("Erro ao atualizar as denúncias: " + data.message);
+                }
+            } catch (error) {
+                console.error("Erro ao atualizar denúncias:", error);
+                alert("Erro no servidor. Tente novamente mais tarde.");
+            }
+        }
+
+        // Função para finalizar denúncias
+        async function finalizeRoutes() {
+            const checkboxes = document.querySelectorAll('.denuncia-checkbox:checked');
+            const selectedDenuncias = Array.from(checkboxes).map((checkbox) => checkbox.value);
+
+            if (selectedDenuncias.length === 0) {
+                alert("Selecione pelo menos uma denúncia.");
+                return;
+            }
+
+            // Atualiza o status para 'finalizado' no backend
+            try {
+                const response = await fetch('http://localhost:5000/update-denuncias-status', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: selectedDenuncias, status: 'finalizado' })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert("Denúncias finalizadas com sucesso!");
+                    fetchDenuncias(); // Recarrega as denúncias
+                } else {
+                    alert("Erro ao atualizar as denúncias: " + data.message);
+                }
+            } catch (error) {
+                console.error("Erro ao finalizar denúncias:", error);
+                alert("Erro no servidor. Tente novamente mais tarde.");
+            }
+        }
+
+        // Carrega as denúncias ao carregar a página
+        window.onload = fetchDenuncias;
+    </script>
+</body>
+</html>

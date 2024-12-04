@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Denúncia</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="../static/images/green_processed.jfif" alt="Logo do Projeto">
+        </div>
+
+        <h2>Nova Denúncia</h2>
+
+        <form id="denunciaForm">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="text" id="localizacao" placeholder="Localização" required readonly>
+                <button type="button" onclick="getCurrentLocation()">Obter Localização</button>
+            </div>
+        
+            <select id="tipoLixo" required>
+                <option value="" disabled selected>Selecione o Tipo de Lixo</option>
+                <option value="orgânico">Orgânico</option>
+                <option value="reciclável">Reciclável</option>
+                <option value="eletrônico">Eletrônico</option>
+                <option value="outro">Outro</option>
+            </select>
+            
+            <input type="file" id="imagem" accept="image/*">
+            
+            <textarea id="descricao" rows="4" placeholder="Descrição da Situação..."></textarea>
+            
+            <button type="submit">Enviar Denúncia</button>
+        </form>
+        
+        <!-- Botão para redirecionar para a página de logs -->
+        <button id="logsButton" onclick="redirectToLogs()">Acompanhe suas denúncias</button> 
+    </div>
+
+
+    <script>
+        function redirectToLogs() {
+            // Redireciona para a página de logs
+            window.location.href = "/logs";
+        }
+    
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        document.getElementById('localizacao').value = `${latitude}, ${longitude}`;
+                    },
+                    (error) => {
+                        alert("Erro ao obter localização: " + error.message);
+                    }
+                );
+            } else {
+                alert("Geolocalização não é suportada pelo navegador.");
+            }
+        }
+    
+        document.getElementById('denunciaForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+    
+            const formData = new FormData();
+            formData.append('localizacao', document.getElementById('localizacao').value);
+            formData.append('tipoLixo', document.getElementById('tipoLixo').value);
+            formData.append('descricao', document.getElementById('descricao').value);
+            formData.append('imagem', document.getElementById('imagem').files[0]);
+            formData.append('user_id', localStorage.getItem('user_id')); // ID do usuário logado
+    
+            try {
+                const response = await fetch('http://localhost:5000/report', {
+                    method: 'POST',
+                    body: formData
+                });
+    
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    window.location.href = "/logs"; // Redireciona automaticamente após enviar
+                } else {
+                    alert("Erro ao cadastrar denúncia: " + data.message);
+                }
+            } catch (error) {
+                console.error("Erro ao enviar denúncia:", error);
+                alert("Erro no servidor. Tente novamente mais tarde.");
+            }
+        });
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progresso das Denúncias</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Progresso das Suas Denúncias</h1>
+        <button onclick="logout()">Deslogar</button>
+        <button onclick="newdenuncia()">denunciar novamente</button>
+        <div id="logContainer">
+            <!-- Logs serão carregados aqui -->
+        </div>
+    </div>
+
+    <script>
+        async function fetchLogs() {
+            const userId = localStorage.getItem('user_id'); // Obtém o ID do usuário logado
+            if (!userId) {
+                alert("Você precisa estar logado para acessar esta página.");
+                window.location.href = "/login";
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/logs/${userId}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    const logContainer = document.getElementById('logContainer');
+                    logContainer.innerHTML = ''; // Limpa o container antes de preencher
+
+                    data.logs.forEach((log) => {
+                    const logDiv = document.createElement('div');
+                    logDiv.classList.add('log-item');
+
+                    // Monta a imagem e os detalhes
+                    logDiv.innerHTML = `
+                        <img src="data:image/jpeg;base64,${log.imagem}" alt="Foto da Denúncia" class="log-image">
+                        <div class="log-details">
+                            <p><strong>Descrição:</strong> ${log.descricao}</p>
+                            <p><strong>Localização:</strong> ${log.localizacao}</p>
+                            <p><strong>Status:</strong> ${log.status}</p>
+                            <p><strong>Data:</strong> ${log.data_criacao}</p>
+                        </div>
+                    `;
+
+                    logContainer.appendChild(logDiv);
+                });
+
+                } else {
+                    alert("Erro ao carregar os logs: " + data.message);
+                }
+            } catch (error) {
+                console.error("Erro ao buscar os logs:", error);
+                alert("Erro no servidor. Tente novamente mais tarde.");
+            }
+        }
+        function newdenuncia() {
+            window.location.href = "/denuncia"; // Redireciona para a página de denúncias
+        }
+
+        function logout() {
+            localStorage.clear(); // Remove os dados do usuário do localStorage
+            window.location.href = "/login"; // Redireciona para a página de login
+        }
+
+        // Chama a função ao carregar a página
+        window.onload = fetchLogs;
+    </script>
+
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .log-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .log-image {
+            max-width: 150px;
+            max-height: 150px;
+            object-fit: cover;
+        }
+        .log-details p {
+            margin: 5px 0;
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenTec - Gestão Inteligente de Lixo</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+
+    <!-- Header e Menu -->
+    <header>
+        <nav>
+            <!-- Botão de Menu Hambúrguer -->
+            <div class="menu-hamburguer" onclick="toggleMenu()">
+                <div class="barra"></div>
+                <div class="barra"></div>
+                <div class="barra"></div>
+            </div>
+
+            <div class="logo">
+                <img src="../static/images/green_processed.jfif" alt="Logo"> <!-- Imagem local da logo -->
+                GreenTec <h1>inovando e construindo</h1>
+            </div>
+            
+            <!-- Menu no hambúrguer -->
+            <ul id="menu">
+                <li><a href="#home">Início</a></li>
+                <li><a href="mapa.html">Mapa Interativo</a></li>
+                <li><a href="educacional.html">Portal Educacional</a></li>
+                <li><a href="portaldecomunicação.html">Portal de Comunicação</a></li>
+                <li><a href="denúncias.html">Denúncias</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Conteúdo das seções -->
+    <section id="home">
+        <div class="slogan">
+            Transforme seu lixo em um futuro mais limpo.
+        </div>
+        <p>Acompanhe a coleta de lixo em tempo real, ajude a cidade a se tornar mais limpa e ainda ganhe recompensas com a gamificação. Juntos podemos mudar o futuro do nosso planeta!</p>
+        <a href="#mapa" class="button">Ver Mapa de Fluxo</a>
+    </section>
+    <section id="gamificacao">
+        <h2>Ganhe Pontos e Faça a Diferença!</h2>
+        <p>Complete desafios diários, recicle mais e ajude a cidade a ficar mais limpa. Ganhe pontos, suba no ranking e receba recompensas por suas ações sustentáveis!</p>
+        <a href="#home" class="button">Comece Agora</a>
+    </section>
+    <section id="comunicacao">
+        <h2>Portal de Comunicação</h2>
+        <p>Reporte áreas com descarte irregular de lixo ou entre em contato com os grupos de coleta. A comunicação eficiente é essencial para manter a cidade limpa e bem organizada.</p>
+        <a href="#denuncias" class="button">Enviar Denúncia</a>
+    </section>
+       <!-- Denúncias -->
+       <section id="denuncias">
+        <h2>Denuncie Locais com Acúmulo de Lixo</h2>
+        <p>Utilize a plataforma para informar locais de descarte irregular e excesso de lixo. Sua contribuição ajuda a manter nossa cidade mais limpa e organizada.</p>
+        <a href="#home" class="button">Enviar Denúncia</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 EcoMap. Todos os direitos reservados.</p>
+        <p><a href="#">Política de Privacidade</a> | <a href="#">Termos de Uso</a> | <a href="#">Contato</a></p>
+    </footer>
+
+
+
+
+    <!-- Resto do conteúdo permanece inalterado -->
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            const hambIcon = document.querySelector('.menu-hamburguer');
+            menu.classList.toggle('active');
+            hambIcon.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Cadastro</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="../static/images/green_processed.jfif" alt="Logo do Projeto">
+        </div>
+
+        <h1>Bem-vindo</h1>
+
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Senha" required>
+            <button type="button" onclick="fazerLogin()">Entrar</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 10px;">
+            <a href="http://localhost:5000/register">Não tem uma conta? Cadastre-se</a>
+        </div>
+    </div>
+
+    <script>
+        
+        async function fazerLogin() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch('http://localhost:5000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert(data.message);
+                localStorage.setItem('user_id', data.user.id); // Salva o ID do usuário no localStorage
+                localStorage.setItem('tipo_usuario', data.user.tipo_usuario); // Salva o tipo de usuário no localStorage
+
+                // Redireciona com base no tipo de usuário
+                if (data.user.tipo_usuario === 'Usuário') {
+                    window.location.href = "/denuncia"; // Página de denúncias
+                } else if (data.user.tipo_usuario === 'Coletor') {
+                    window.location.href = "/coletor"; // Página do coletor
+                } else {
+                    alert("Tipo de usuário inválido.");
+                }
+            } else {
+                alert("Erro ao fazer login: " + data.message);
+            }
+        } catch (error) {
+            console.error("Erro ao fazer login:", error);
+            alert("Erro no servidor. Tente novamente mais tarde.");
+        }
+    }
+
+    </script>
+</body>
+</html>
