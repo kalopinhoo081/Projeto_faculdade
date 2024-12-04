@@ -4,3 +4,4 @@ Flask-Cors
 Werkzeug
 mysql-connector-python
 geopy
+gunicorn
